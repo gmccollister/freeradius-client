@@ -26,11 +26,15 @@ main (int argc, char **argv)
 	int             result;
 	char		username[128];
 	char            passwd[AUTH_PASS_LEN + 1];
-	VALUE_PAIR 	*send, *received;
+	VALUE_PAIR 	*send, *received, *vp;
 	uint32_t		service;
 	char 		msg[4096], username_realm[256];
 	char		*default_realm;
 	rc_handle	*rh;
+	char            name[2048], value[2048], *p; /* more than enough */
+	int acount[256], attr;
+
+	memset(acount, 0, sizeof(acount));
 
 	pname = (pname = strrchr(argv[0],'/'))?pname+1:argv[0];
 
@@ -90,6 +94,45 @@ main (int argc, char **argv)
 	else
 	{
 		fprintf(stderr, "\"%s\" RADIUS Authentication failure (RC=%i)\n", username, result);
+	}
+	
+	vp = received;
+
+	/* map-- keep track of the attributes so that we know
+	   when to add the delimiters. Note that we can only
+	   handle attributes < 256, which is the standard anyway. */
+
+	while (vp)
+	{
+		strcpy(name, "RADIUS_");
+		if (rc_avpair_tostr(rh, vp, name+7, sizeof(name)-7, value, sizeof(value)) < 0) {
+			rc_avpair_free(send);
+			rc_avpair_free(received);
+			printf("rc_avpair_tostr error!\n");
+			return ERROR_RC;
+		}
+
+		/* Translate "-" => "_" and uppercase*/
+		for(p = name; *p; p++) {
+			*p = toupper(*p);
+			if (*p == '-') *p = '_';
+		}
+
+		/* Add to the attribute count and append the var
+		   if necessary. */
+		if ((attr = vp->attribute) < 256)
+		{
+			int count;
+			if ((count = acount[attr]++) > 0) {
+				char buf[10];
+				snprintf(buf, sizeof(buf), "_%d", count);
+				strcat(name,buf);
+			}
+		}
+
+		printf("%s = %s\n", name, value);
+
+		vp = vp->next;
 	}
 
 	return result;
