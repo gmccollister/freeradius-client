@@ -16,11 +16,11 @@ sbindir = @sbindir@
 pkgsysconfdir = @pkgsysconfdir@
 pkgsysconf_DATA = issue port-id-map radiusclient.conf \
 	dictionary dictionary.ascend dictionary.compat dictionary.merit \
-	dictionary.sip
+	dictionary.sip dictionary.unix
 
 EXTRA_DIST = issue port-id-map dictionary dictionary.ascend \
 	dictionary.compat dictionary.merit servers radiusclient.conf.in \
-	dictionary.sip
+	dictionary.sip dictionary.unix
 
 radiusclient.conf: radiusclient.conf.in
 	sed -e 's|@sbin''dir@|$(sbindir)|g' \

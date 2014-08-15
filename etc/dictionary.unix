@@ -1,0 +1,17 @@
+# -*- text -*-
+# Copyright (C) 2011 The FreeRADIUS Server project and contributors
+#
+#	Allegedly for ProFTPd.
+#
+#	$Id: 9e5d7adbd7dfd03a8b08984958533ed006df9a1f $
+#
+
+VENDOR		Unix				4
+
+ATTRIBUTE	Unix-FTP-UID				10	integer	vendor=Unix
+ATTRIBUTE	Unix-FTP-GID				11	integer vendor=Unix
+ATTRIBUTE	Unix-FTP-Home				12	string	vendor=Unix
+ATTRIBUTE	Unix-FTP-Shell				13	string	vendor=Unix
+ATTRIBUTE	Unix-FTP-Group-Names			14	string	vendor=Unix
+ATTRIBUTE	Unix-FTP-Group-Ids			15	string	vendor=Unix
+
